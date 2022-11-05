@@ -19,39 +19,59 @@ app.post('/createUser', async (req, res) => {
     lastName = req.body.lastName;
     phoneNumber = req.body.phoneNumber;
 
+    emailList = await knex('USERS').select('*').where({email: email});
+    phoneList = await knex('USERS').select('*').where({phone: phoneNumber});        
     
-    emailList = await knex('USERS').select('*').where({email: email})
-    phoneList = await knex('USERS').select('*').where({phone: phoneNumber})
+    // Validate and make sure that phoneNumber, lastName, firstName, password, email are not empty
+    if(email === null, password === null, firstName  === null, lastName === null, phoneNumber === null) {
+        failureAPIResponse(req, res, 'Input Fields Cannot be empty');
+    }
 
     // Validate whether Email or Phone Number exists
-    if(emailList.length !== 0 || phoneList.length !== 0) {
-        console.log('Phone number or email address already exists');
+    else if(emailList.length !== 0 || phoneList.length !== 0) {
         failureAPIResponse(req, res, 'Phone number or email address already exists');
         return;
     }
+    
     else {
-        // Validate and make sure that phoneNumber, lastName, firstName, password, email are not empty
-        if(email === null, password === null, firstName  === null, lastName === null, phoneNumber === null) {
-            failureAPIResponse(req, res, 'Input Fields Cannot be empty');
+        let insertResponse = await knex.insert({
+            email: email,
+            password: password,
+            first_name: firstName,
+            last_name: lastName,
+            phone: phoneNumber,
+        }).into('USERS').returning('id');
+
+        if(insertResponse.length === 0) {
+            failureAPIResponse(req, res, 'Failure in creating user');
         }
         else {
-            let insertResponse = await knex.insert({
-                email: email,
-                password: password,
-                first_name: firstName,
-                last_name: lastName,
-                phone: phoneNumber,
-            }).into('USERS').returning('id');
-
-            if(insertResponse.length === 0) {
-                failureAPIResponse(req, res, 'Failure in creating user profile');
-            }
-            else {
-                successAPIResponse(req, res, 'User Created successfully');
-            }
+            successAPIResponse(req, res, 'User Created successfully');
         }
     }
 })
+
+app.post('/authenticateUser', async (req, res) => {
+    email = req.body.email;
+    password = req.body.password;
+
+    if(email === null, password === null) {
+        failureAPIResponse(req, res, 'Username and Password cannot be empty');
+    }
+
+    userList = await knex('USERS').select('*').where({
+        email: email,
+        password: password
+    });
+    if(userList.length === 0) {
+        failureAPIResponse(req, res, 'Authentication failed', 401);
+    }
+    else {
+        successAPIResponse(req, res, 'Authentication successful');
+    }
+})
+
+
   
 app.listen(port, () => {
     console.log(`One Click Classifieds Backend application is listening on port ${port}`)
