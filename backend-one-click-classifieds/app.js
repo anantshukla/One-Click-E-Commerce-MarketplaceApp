@@ -136,6 +136,44 @@ app.post('/updateAdvertisementDetails', async (req, res) => {
     }
 })
 
+
+app.post('/getAllActiveAdvertisements', async (req, res) => {
+    let loggedinUserId = req.body.loggedinUserId ? req.body.loggedinUserId: 0;
+
+    // Get all advertisements joined with the user table where
+    // 1. Advert is active
+    // 2. The logged in user doesnt see their own advertisement.  
+    let advertisementList = await knex('ADVERTISEMENTS AS a')
+    .select('*')
+    .whereNot({
+        'a.seller_id': loggedinUserId,
+        'a.advertisement_status': 0
+    })
+    .leftJoin('USERS AS u', 'a.seller_id', 'u.id');
+    
+    let allAdvertisements = {}
+    allAdvertisements['advertisements'] = advertisementList;
+
+    successAPIResponse(req, res, allAdvertisements);
+})
+
+app.post('/getAdvertisementDetails', async (req, res) => {
+    let advertisementId = req.body.advertisementId ? req.body.advertisementId: 0;
+
+    // Get details of a particular advertisement id joined with the user table 
+    let advertisementResponse = await knex('ADVERTISEMENTS AS a')
+    .select('*')
+    .where({
+        'a.id': advertisementId 
+    })
+    .leftJoin('USERS AS u', 'a.seller_id', 'u.id');
+
+    // Converting array of single element to a json named advertisementDetails
+    let advertisementDetails = {}
+    advertisementDetails['advertisementDetails'] = advertisementResponse[0];
+    successAPIResponse(req, res, advertisementDetails);
+})
+
  
 app.listen(port, () => {
     console.log(`One Click Classifieds Backend application is listening on port ${port}`)
