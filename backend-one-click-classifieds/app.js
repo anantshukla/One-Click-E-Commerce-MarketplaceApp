@@ -7,7 +7,6 @@ const defaultSuccessStatusCode = 200;
 
 app.use(express.json());
 
-
 app.get('/', (req, res) => {
     successAPIResponse(req, res, 'One Click Classifieds Rest API is running')
 })
@@ -71,8 +70,38 @@ app.post('/authenticateUser', async (req, res) => {
     }
 })
 
+app.post('/addAdvertisement', async (req, res) => {
+    let advertisementName = req.body.advertisementName;
+    let advertisementDescription = req.body.advertisementDescription;
+    let advertisementPrice = req.body.advertisementPrice;
+    let advertisementLocation = req.body.advertisementLocation;
+    let sellerId = req.body.sellerId;
+    let advertisementCategories = req.body.advertisementCategories;
 
-  
+    advertisementCategoriesString = advertisementCategories.join();
+
+    // TODO: Validation to check if strings are empty
+    
+    let insertAdvertisementResponse = await knex("ADVERTISEMENTS")
+    .insert({
+        advertisement_name: advertisementName,
+        description: advertisementDescription,
+        price: advertisementPrice,
+        location: advertisementLocation,
+        advertisement_status: 1,
+        seller_id: sellerId,
+        categories: advertisementCategoriesString
+    }).returning('id');
+    
+    if(insertAdvertisementResponse.length === 0) {
+        failureAPIResponse(req, res, 'Failure in creating advertisement');
+    }
+    else {
+        successAPIResponse(req, res, 'Advertisement Created Successfully');
+    }
+})
+
+ 
 app.listen(port, () => {
     console.log(`One Click Classifieds Backend application is listening on port ${port}`)
 })
