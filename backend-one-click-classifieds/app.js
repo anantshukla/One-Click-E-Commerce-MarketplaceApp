@@ -101,6 +101,41 @@ app.post('/addAdvertisement', async (req, res) => {
     }
 })
 
+app.post('/updateAdvertisementDetails', async (req, res) => {
+    let advertisementId = req.body.advertisementId;
+    let advertisementName = req.body.advertisementName;
+    let advertisementDescription = req.body.advertisementDescription;
+    let advertisementPrice = req.body.advertisementPrice;
+    let advertisementLocation = req.body.advertisementLocation;
+    let advertisementCategories = req.body.advertisementCategories;
+    let advertisementStatus = req.body.advertisementStatus;
+
+    advertisementCategoriesString = advertisementCategories.join();
+
+    // TODO: Validation to check if strings are empty
+    
+    let insertAdvertisementResponse = await knex("ADVERTISEMENTS")
+    .update({
+        advertisement_name: advertisementName,
+        description: advertisementDescription,
+        price: advertisementPrice,
+        location: advertisementLocation,
+        advertisement_status: advertisementStatus,
+        categories: advertisementCategoriesString
+    })
+    .where({
+        id: advertisementId
+    })
+    .returning('id');
+    
+    if(insertAdvertisementResponse.length === 0) {
+        failureAPIResponse(req, res, 'Failure in updating advertisement');
+    }
+    else {
+        successAPIResponse(req, res, 'Advertisement Updated Successfully');
+    }
+})
+
  
 app.listen(port, () => {
     console.log(`One Click Classifieds Backend application is listening on port ${port}`)
