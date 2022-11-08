@@ -1,12 +1,16 @@
 const express = require("express");
 const app = express();
 
+let CryptoJS = require("crypto-js");
+let SHA256 = require("crypto-js/sha256");
+
 const port = 3001;
 const defaultErrorStatusCode = 400;
 const defaultSuccessStatusCode = 200;
 
 app.use(express.json());
 
+// Health Check API which can be used to ping the API Server to know if the Server is running or not
 app.get('/', (req, res) => {
     successAPIResponse(req, res, 'One Click Classifieds Rest API is running')
 })
@@ -18,27 +22,33 @@ app.post('/createUser', async (req, res) => {
     lastName = req.body.lastName;
     phoneNumber = req.body.phoneNumber;
 
-    emailList = await knex('USERS').select('*').where({email: email});
-    phoneList = await knex('USERS').select('*').where({phone: phoneNumber});        
-    
-    // Validate and make sure that phoneNumber, lastName, firstName, password, email are not empty
-    if(email === null, password === null, firstName  === null, lastName === null, phoneNumber === null) {
-        failureAPIResponse(req, res, 'Input Fields Cannot be empty');
-    }
+    const hashedPassword = SHA256(password).toString(CryptoJS.enc.Base64);
+    // console.log(hashedPassword)
 
+    emailList = await knex('USERS').select('id').where({email: email});
+    phoneList = await knex('USERS').select('id').where({phone: phoneNumber});        
+    
     // Validate whether Email or Phone Number exists
-    else if(emailList.length !== 0 || phoneList.length !== 0) {
+    if(emailList.length !== 0 || phoneList.length !== 0) {
         failureAPIResponse(req, res, 'Phone number or email address already exists');
         return;
     }
-    
+
+    // Validate and make sure that phoneNumber, lastName, firstName, password, email are not empty
+    else if(email === null, password === null, firstName  === null, lastName === null, phoneNumber === null) {
+        failureAPIResponse(req, res, 'Input Fields Cannot be empty');
+    }
     else {
+        let currentTime = getCurrentTimeInISO();
+
         let insertResponse = await knex.insert({
             email: email,
-            password: password,
+            password: hashedPassword,
             first_name: firstName,
             last_name: lastName,
             phone: phoneNumber,
+            created_on: currentTime,
+            created_by: 'System'
         }).into('USERS').returning('id');
 
         if(insertResponse.length === 0) {
@@ -54,13 +64,15 @@ app.post('/authenticateUser', async (req, res) => {
     email = req.body.email;
     password = req.body.password;
 
+    const hashedPassword = SHA256(password).toString(CryptoJS.enc.Base64);
+
     if(email === null, password === null) {
         failureAPIResponse(req, res, 'Username and Password cannot be empty');
     }
 
     userList = await knex('USERS').select('*').where({
         email: email,
-        password: password
+        password: hashedPassword
     });
     if(userList.length === 0) {
         failureAPIResponse(req, res, 'Authentication failed', 401);
@@ -70,7 +82,7 @@ app.post('/authenticateUser', async (req, res) => {
     }
 })
 
-app.post('/addAdvertisement', async (req, res) => {
+app.post('/addProductsToSale', async (req, res) => {
     let advertisementName = req.body.advertisementName;
     let advertisementDescription = req.body.advertisementDescription;
     let advertisementPrice = req.body.advertisementPrice;
@@ -101,43 +113,43 @@ app.post('/addAdvertisement', async (req, res) => {
     }
 })
 
-app.post('/updateAdvertisementDetails', async (req, res) => {
-    let advertisementId = req.body.advertisementId;
-    let advertisementName = req.body.advertisementName;
-    let advertisementDescription = req.body.advertisementDescription;
-    let advertisementPrice = req.body.advertisementPrice;
-    let advertisementLocation = req.body.advertisementLocation;
-    let advertisementCategories = req.body.advertisementCategories;
-    let advertisementStatus = req.body.advertisementStatus;
+// app.post('/updateAdvertisementDetails', async (req, res) => {
+//     let advertisementId = req.body.advertisementId;
+//     let advertisementName = req.body.advertisementName;
+//     let advertisementDescription = req.body.advertisementDescription;
+//     let advertisementPrice = req.body.advertisementPrice;
+//     let advertisementLocation = req.body.advertisementLocation;
+//     let advertisementCategories = req.body.advertisementCategories;
+//     let advertisementStatus = req.body.advertisementStatus;
 
-    advertisementCategoriesString = advertisementCategories.join();
+//     advertisementCategoriesString = advertisementCategories.join();
 
-    // TODO: Validation to check if strings are empty
+//     // TODO: Validation to check if strings are empty
     
-    let insertAdvertisementResponse = await knex("ADVERTISEMENTS")
-    .update({
-        advertisement_name: advertisementName,
-        description: advertisementDescription,
-        price: advertisementPrice,
-        location: advertisementLocation,
-        advertisement_status: advertisementStatus,
-        categories: advertisementCategoriesString
-    })
-    .where({
-        id: advertisementId
-    })
-    .returning('id');
+//     let insertAdvertisementResponse = await knex("ADVERTISEMENTS")
+//     .update({
+//         advertisement_name: advertisementName,
+//         description: advertisementDescription,
+//         price: advertisementPrice,
+//         location: advertisementLocation,
+//         advertisement_status: advertisementStatus,
+//         categories: advertisementCategoriesString
+//     })
+//     .where({
+//         id: advertisementId
+//     })
+//     .returning('id');
     
-    if(insertAdvertisementResponse.length === 0) {
-        failureAPIResponse(req, res, 'Failure in updating advertisement');
-    }
-    else {
-        successAPIResponse(req, res, 'Advertisement Updated Successfully');
-    }
-})
+//     if(insertAdvertisementResponse.length === 0) {
+//         failureAPIResponse(req, res, 'Failure in updating advertisement');
+//     }
+//     else {
+//         successAPIResponse(req, res, 'Advertisement Updated Successfully');
+//     }
+// })
 
 
-app.post('/getAllActiveAdvertisements', async (req, res) => {
+app.post('/getAllProductsForSale', async (req, res) => {
     let loggedinUserId = req.body.loggedinUserId ? req.body.loggedinUserId: 0;
 
     // Get all advertisements joined with the user table where
@@ -157,8 +169,8 @@ app.post('/getAllActiveAdvertisements', async (req, res) => {
     successAPIResponse(req, res, allAdvertisements);
 })
 
-app.post('/getAdvertisementDetails', async (req, res) => {
-    let advertisementId = req.body.advertisementId ? req.body.advertisementId: 0;
+app.post('/getProductDetails', async (req, res) => {
+    let productId = req.body.productId ? req.body.productId: 0;
 
     // Get details of a particular advertisement id joined with the user table 
     let advertisementResponse = await knex('ADVERTISEMENTS AS a')
@@ -183,11 +195,14 @@ app.listen(port, () => {
 const knex = require('knex')({
     client: 'sqlite3',
     connection: {
-      filename: "../sql/one_click_classifieds.sqlite"
+      filename: "../sql/e_commerce_marketplace.sqlite"
     },
     useNullAsDefault: true,
 });
 
+const getCurrentTimeInISO = () => {
+    return (new Date).toISOString();
+}
 
 const successMessage = (msg) => {
     return {
