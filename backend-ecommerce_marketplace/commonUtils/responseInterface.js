@@ -22,14 +22,14 @@ const failureAPIResponse = (req, res, msg, statusCode = defaultErrorStatusCode) 
 const successMessageStructure = (msg) => {
 	return {
 		message: msg,
-		status: 1,
+		statusCode: 1,
 	};
 };
 
 const failureMessageStructure = (msg) => {
 	return {
 		message: msg,
-		status: 0,
+		statusCode: 0,
 	};
 };
 

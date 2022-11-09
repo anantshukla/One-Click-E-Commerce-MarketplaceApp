@@ -8,6 +8,7 @@ const SHA256 = require("crypto-js/sha256");
 const knex = require("../DB/db");
 
 const { successAPIResponse, failureAPIResponse } = require("../commonUtils/responseInterface");
+const { getCurrentTimeInISO } = require("../commonUtils/commonUtilityFunctions");
 
 // API to Create User
 userRouter.post("/createUser", async (req, res) => {
@@ -30,7 +31,7 @@ userRouter.post("/createUser", async (req, res) => {
 		}
 
 		// Validate and make sure that phoneNumber, lastName, firstName, password, email are not empty
-		else if ((email === null, password === null, firstName === null, lastName === null, phoneNumber === null)) {
+		else if (email === null || password === null || firstName === null || lastName === null || phoneNumber === null) {
 			failureAPIResponse(req, res, "Input Fields Cannot be empty");
 		} else {
 			let currentTime = getCurrentTimeInISO();
@@ -67,7 +68,7 @@ userRouter.post("/authenticateUser", async (req, res) => {
 
 		const hashedPassword = SHA256(password).toString(CryptoJS.enc.Base64);
 
-		if ((email === null, password === null)) {
+		if (email === null || password === null) {
 			failureAPIResponse(req, res, "Username and Password cannot be empty");
 		}
 

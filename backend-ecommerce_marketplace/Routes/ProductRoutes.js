@@ -11,6 +11,7 @@ const axios = require("axios");
 const { productImagesLocation } = require("../commonUtils/constants");
 
 const { successAPIResponse, failureAPIResponse } = require("../commonUtils/responseInterface");
+const { getCurrentTimeInISO, downloadImageFromUrl } = require("../commonUtils/commonUtilityFunctions");
 
 const knex = require("../DB/db");
 

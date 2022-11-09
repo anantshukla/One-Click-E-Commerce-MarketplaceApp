@@ -1,3 +1,8 @@
+let fs = require("fs"),
+	http = require("http"),
+	https = require("https");
+let Stream = require("stream").Transform;
+
 const getCurrentTimeInISO = () => {
 	return new Date().toISOString();
 };
