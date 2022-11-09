@@ -7,7 +7,7 @@ function HeroSection() {
   return (
     <div className='hero-container'>
       <video  className='VideoTag' autoPlay loop muted >
-        <source src='/videos/video2.mp4' type='video/mp4'/>
+        <source src='/videos/video.mp4' type='video/mp4'/>
       </video>
       <h1>Everything You Need Is Here</h1>
       <p>BEST DEALS !</p>
