@@ -35,6 +35,7 @@ CREATE TABLE PRODUCTS (
 	description TEXT,
 	price DECIMAL(10,5) NOT NULL,
 	category_id INTEGER,
+	image_path TEXT,
 	-- For Audit Trailing	
 	created_on DATETIME,
 	created_by TEXT,

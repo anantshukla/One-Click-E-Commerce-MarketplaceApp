@@ -22,7 +22,7 @@ var Stream = require('stream').Transform;
 const port = 3001;
 const defaultErrorStatusCode = 400;
 const defaultSuccessStatusCode = 200;
-const productImagesLocation = './assets/images'
+const productImagesLocation = 'assets/images'
 
 app.use(express.json());
 
@@ -132,17 +132,23 @@ app.post('/addProductsToCatalog', async (req, res) => {
                 categoryId = categoryIdArr[0].id;
             }
 
+            
+            
             let productIdInserted = await knex.raw(`INSERT INTO PRODUCTS(name, description, price, category_id, created_on, created_by) VALUES ('${title}', '${description}', ${price}, ${categoryId}, '${currentTime}', 'System') RETURNING id;`);
             productIdInserted = productIdInserted[0].id;
 
             const fileExtension = image.split('.').pop()
-            await downloadImageFromUrl(image, `${productImagesLocation}/${productIdInserted}.${fileExtension}`) 
+            let imagePath = `${productImagesLocation}/${productIdInserted}.${fileExtension}`
+            // Downloads the File into the Storage of Server
+            await downloadImageFromUrl(image, `${imagePath}`) 
 
+            await knex.raw(`UPDATE PRODUCTS SET image_path='${imagePath}' WHERE id=${productIdInserted};`);
         };
 
         successAPIResponse(req, res, 'Products added successfully');
     }
     catch (ex){
+        console.log(ex)
         failureAPIResponse(req, res, 'Failure in creating advertisement');
     }
 
@@ -171,6 +177,7 @@ app.post('/getAllProducts', async (req, res) => {
                 p.name as productName,
                 p.description as productDescription,
                 p.price,
+                p.image_path as imageURL,
                 c.name as categoryName
         FROM PRODUCTS AS p
         LEFT JOIN CATEGORIES as c
@@ -194,6 +201,7 @@ app.post('/getProductDetails', async (req, res) => {
                 p.name as productName,
                 p.description as productDescription,
                 p.price,
+                p.image_path as imageURL,
                 c.name as categoryName
         FROM PRODUCTS AS p
         LEFT JOIN CATEGORIES as c
@@ -207,18 +215,19 @@ app.post('/getProductDetails', async (req, res) => {
     successAPIResponse(req, res, productDetails);
 })
 
-app.get('/getProductImage/:productId', async (req, res) => {
+app.post('/getProductImage/', async (req, res) => {
+    let imageURL = req.body.imageURL;
+
     var httpOptions = {
         root: path.join(__dirname)
     };
     productId = req.params.productId;
-    filePath = `${productImagesLocation}/1.jpg`;
-    res.sendFile(filePath, httpOptions, function (err) {
+    res.sendFile(imageURL, httpOptions, function (err) {
         if(err) {
-            next(err);
+            failureAPIResponse(req, res, 'Image Not Found', 404);
         }
         else {
-            console.log(`Image Sent: ${filePath}`)
+            console.log(`Image Sent: ${imageURL}`)
         }
     })
 })
