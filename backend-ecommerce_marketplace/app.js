@@ -1,12 +1,26 @@
 const express = require("express");
 const app = express();
 
-let CryptoJS = require("crypto-js");
-let SHA256 = require("crypto-js/sha256");
+// For hashing password
+const CryptoJS = require("crypto-js");
+const SHA256 = require("crypto-js/sha256");
 
+// 
+const axios = require('axios');
+
+
+// To download the images of the products from Public API
+let fs = require('fs'),
+http = require('http'),
+https = require('https');
+
+var Stream = require('stream').Transform;
+
+// API Constants
 const port = 3001;
 const defaultErrorStatusCode = 400;
 const defaultSuccessStatusCode = 200;
+const productImagesLocation = './assets/images'
 
 app.use(express.json());
 
@@ -14,6 +28,9 @@ app.use(express.json());
 app.get('/', (req, res) => {
     successAPIResponse(req, res, 'One Click Classifieds Rest API is running')
 })
+
+
+// API to Create User
 
 app.post('/createUser', async (req, res) => {
     email = req.body.email;
@@ -23,7 +40,6 @@ app.post('/createUser', async (req, res) => {
     phoneNumber = req.body.phoneNumber;
 
     const hashedPassword = SHA256(password).toString(CryptoJS.enc.Base64);
-    // console.log(hashedPassword)
 
     emailList = await knex('USERS').select('id').where({email: email});
     phoneList = await knex('USERS').select('id').where({phone: phoneNumber});        
@@ -60,6 +76,9 @@ app.post('/createUser', async (req, res) => {
     }
 })
 
+
+// API to Authenticate User
+
 app.post('/authenticateUser', async (req, res) => {
     email = req.body.email;
     password = req.body.password;
@@ -74,6 +93,7 @@ app.post('/authenticateUser', async (req, res) => {
         email: email,
         password: hashedPassword
     });
+
     if(userList.length === 0) {
         failureAPIResponse(req, res, 'Authentication failed', 401);
     }
@@ -82,108 +102,107 @@ app.post('/authenticateUser', async (req, res) => {
     }
 })
 
-app.post('/addProductsToSale', async (req, res) => {
-    let advertisementName = req.body.advertisementName;
-    let advertisementDescription = req.body.advertisementDescription;
-    let advertisementPrice = req.body.advertisementPrice;
-    let advertisementLocation = req.body.advertisementLocation;
-    let sellerId = req.body.sellerId;
-    let advertisementCategories = req.body.advertisementCategories;
 
-    advertisementCategoriesString = advertisementCategories.join();
+// API that reads the public API and inserts data to our inventory
+// https://fakestoreapi.com/
 
-    // TODO: Validation to check if strings are empty
-    
-    let insertAdvertisementResponse = await knex("ADVERTISEMENTS")
-    .insert({
-        advertisement_name: advertisementName,
-        description: advertisementDescription,
-        price: advertisementPrice,
-        location: advertisementLocation,
-        advertisement_status: 1,
-        seller_id: sellerId,
-        categories: advertisementCategoriesString
-    }).returning('id');
-    
-    if(insertAdvertisementResponse.length === 0) {
+app.post('/addProductsToCatalog', async (req, res) => {
+    try {
+        const APILink = "https://fakestoreapi.com/products?limit=50"
+        const responseFromGetProducts = (await axios.get(APILink)).data;
+
+        for await (const eachProduct of responseFromGetProducts) {
+            let currentTime = getCurrentTimeInISO();
+            let {title, price,description,category,image} = eachProduct;
+            category = category.replace(/['‘’"“”]/g, '')
+            title = title.replace(/['‘’"“”]/g, '')
+            description = description.replace(/['‘’"“”]/g, '')
+
+            let categoryIdArr = await knex.raw(`SELECT id FROM CATEGORIES c WHERE c.name = '${category}'`);
+            let categoryId;
+
+            if(categoryIdArr.length !=  0) {
+                categoryId = categoryIdArr[0].id;
+            }
+            else {  // Insert Category
+                
+                let categoryIdArr = await knex.raw(`INSERT INTO CATEGORIES(name, created_by, created_on) VALUES ('${category}', 'System', '${currentTime}') RETURNING id;`);
+                categoryId = categoryIdArr[0].id;
+            }
+
+            let productIdInserted = await knex.raw(`INSERT INTO PRODUCTS(name, description, price, category_id, created_on, created_by) VALUES ('${title}', '${description}', ${price}, ${categoryId}, '${currentTime}', 'System') RETURNING id;`);
+            productIdInserted = productIdInserted[0].id;
+
+            const fileExtension = image.split('.').pop()
+            await downloadImageFromUrl(image, `${productImagesLocation}/${productIdInserted}.${fileExtension}`) 
+
+        };
+
+        successAPIResponse(req, res, 'Products added successfully');
+    }
+    catch (ex){
         failureAPIResponse(req, res, 'Failure in creating advertisement');
     }
-    else {
-        successAPIResponse(req, res, 'Advertisement Created Successfully');
-    }
+
 })
 
-// app.post('/updateAdvertisementDetails', async (req, res) => {
-//     let advertisementId = req.body.advertisementId;
-//     let advertisementName = req.body.advertisementName;
-//     let advertisementDescription = req.body.advertisementDescription;
-//     let advertisementPrice = req.body.advertisementPrice;
-//     let advertisementLocation = req.body.advertisementLocation;
-//     let advertisementCategories = req.body.advertisementCategories;
-//     let advertisementStatus = req.body.advertisementStatus;
-
-//     advertisementCategoriesString = advertisementCategories.join();
-
-//     // TODO: Validation to check if strings are empty
+app.get('/getAllProductCategories', async (req, res) => {
     
-//     let insertAdvertisementResponse = await knex("ADVERTISEMENTS")
-//     .update({
-//         advertisement_name: advertisementName,
-//         description: advertisementDescription,
-//         price: advertisementPrice,
-//         location: advertisementLocation,
-//         advertisement_status: advertisementStatus,
-//         categories: advertisementCategoriesString
-//     })
-//     .where({
-//         id: advertisementId
-//     })
-//     .returning('id');
-    
-//     if(insertAdvertisementResponse.length === 0) {
-//         failureAPIResponse(req, res, 'Failure in updating advertisement');
-//     }
-//     else {
-//         successAPIResponse(req, res, 'Advertisement Updated Successfully');
-//     }
-// })
+    // Query that gets list of all the Categories from the db
+    let categoriesList = await knex.raw(`
+        SELECT id, name
+        FROM CATEGORIES c
+    `);
 
+    // Converting array of single element to a json named categoriesDetails
+    let categoriesDetails = {}
+    categoriesDetails['productCategories'] = categoriesList;
 
-app.post('/getAllProductsForSale', async (req, res) => {
-    let loggedinUserId = req.body.loggedinUserId ? req.body.loggedinUserId: 0;
-
-    // Get all advertisements joined with the user table where
-    // 1. Advert is active
-    // 2. The logged in user doesnt see their own advertisement.  
-    let advertisementList = await knex('ADVERTISEMENTS AS a')
-    .select('*')
-    .whereNot({
-        'a.seller_id': loggedinUserId,
-        'a.advertisement_status': 0
-    })
-    .leftJoin('USERS AS u', 'a.seller_id', 'u.id');
-    
-    let allAdvertisements = {}
-    allAdvertisements['advertisements'] = advertisementList;
-
-    successAPIResponse(req, res, allAdvertisements);
+    successAPIResponse(req, res, categoriesDetails);
 })
+
+
+app.post('/getAllProducts', async (req, res) => {
+
+    let productList = await knex.raw(
+        `SELECT p.id as productId,
+                p.name as productName,
+                p.description as productDescription,
+                p.price,
+                c.name as categoryName
+        FROM PRODUCTS AS p
+        LEFT JOIN CATEGORIES as c
+            ON c.id = p.category_id;
+    `);
+
+    // Converting array of single element to a json named allProducts
+    let allProducts = {}
+    allProducts['products'] = productList;
+
+    successAPIResponse(req, res, allProducts);
+});
+
 
 app.post('/getProductDetails', async (req, res) => {
     let productId = req.body.productId ? req.body.productId: 0;
 
-    // Get details of a particular advertisement id joined with the user table 
-    let advertisementResponse = await knex('ADVERTISEMENTS AS a')
-    .select('*')
-    .where({
-        'a.id': advertisementId 
-    })
-    .leftJoin('USERS AS u', 'a.seller_id', 'u.id');
+    // Get details of a particular product id from the product table
+    let productDetailsResponse = await knex.raw(
+        `SELECT p.id as productId,
+                p.name as productName,
+                p.description as productDescription,
+                p.price,
+                c.name as categoryName
+        FROM PRODUCTS AS p
+        LEFT JOIN CATEGORIES as c
+            ON c.id = p.category_id
+        WHERE p.id = ${productId};
+    `);
 
     // Converting array of single element to a json named advertisementDetails
-    let advertisementDetails = {}
-    advertisementDetails['advertisementDetails'] = advertisementResponse[0];
-    successAPIResponse(req, res, advertisementDetails);
+    let productDetails = {}
+    productDetails['advertisementDetails'] = productDetailsResponse[0];
+    successAPIResponse(req, res, productDetails);
 })
 
  
@@ -203,6 +222,26 @@ const knex = require('knex')({
 const getCurrentTimeInISO = () => {
     return (new Date).toISOString();
 }
+
+const downloadImageFromUrl = (url, filename) => {
+
+    var client = http;
+    if (url.toString().indexOf("https") === 0) {
+        client = https;
+    }
+
+    client.request(url, function(response) {
+        var data = new Stream();                                                    
+
+      response.on('data', function(chunk) {                                       
+         data.push(chunk);
+      });                                       
+
+      response.on('end', function() {                                             
+         fs.writeFileSync(filename, data.read());                               
+      });                                                                         
+   }).end();
+};
 
 const successMessage = (msg) => {
     return {
