@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+var path = require('path');
+
 // For hashing password
 const CryptoJS = require("crypto-js");
 const SHA256 = require("crypto-js/sha256");
@@ -203,6 +205,22 @@ app.post('/getProductDetails', async (req, res) => {
     let productDetails = {}
     productDetails['advertisementDetails'] = productDetailsResponse[0];
     successAPIResponse(req, res, productDetails);
+})
+
+app.get('/getProductImage/:productId', async (req, res) => {
+    var httpOptions = {
+        root: path.join(__dirname)
+    };
+    productId = req.params.productId;
+    filePath = `${productImagesLocation}/1.jpg`;
+    res.sendFile(filePath, httpOptions, function (err) {
+        if(err) {
+            next(err);
+        }
+        else {
+            console.log(`Image Sent: ${filePath}`)
+        }
+    })
 })
 
  
