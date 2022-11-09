@@ -1,0 +1,199 @@
+{
+	"info": {
+		"_postman_id": "1c54a10f-ec7e-4d0c-bad1-d1b770997afd",
+		"name": "SOEN-E-Commerce",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8213730"
+	},
+	"item": [
+		{
+			"name": "localhost:3001/createUser",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"tim@gmail.com\",\r\n    \"password\": \"password5\",\r\n    \"firstName\": \"Tim\",\r\n    \"lastName\": \"Tamara\",\r\n    \"phoneNumber\": \"+1 887 444 5555\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/createUser",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"createUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:3001/authenticateUser",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"tim@gmail.com\",\r\n    \"password\": \"password5\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/authenticateUser",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"authenticateUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:3001/addProductsToCatalog",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:3001/addProductsToCatalog",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"addProductsToCatalog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:3001/getAllProducts",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/getAllProducts",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"getAllProducts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:3001/getProductDetails",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"productId\": 4\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/getProductDetails",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"getProductDetails"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:3001/getAllProductCategories",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3001/getAllProductCategories",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"getAllProductCategories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:3001/getProductImage",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"imageURL\": \"./assets/images/4.jpg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/getProductImage",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"getProductImage"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:3001/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3001/",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

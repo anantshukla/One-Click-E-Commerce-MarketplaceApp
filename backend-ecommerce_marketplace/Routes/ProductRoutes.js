@@ -132,7 +132,7 @@ productRouter.post("/getProductDetails", async (req, res) => {
 	}
 });
 
-productRouter.post("/getProductImage/", async (req, res) => {
+productRouter.post("/getProductImage", async (req, res) => {
 	try {
 		let imageURL = req.body.imageURL;
 
@@ -155,7 +155,3 @@ productRouter.post("/getProductImage/", async (req, res) => {
 });
 
 module.exports = productRouter;
-
-// E:\Concordia University - Study\Term 1\SOEN 6441\Project\One-Click-Classifieds-App\backend-ecommerce_marketplace
-// ./assets/images/4.jpg
-// Image Sent: ./assets/images/4.jpg

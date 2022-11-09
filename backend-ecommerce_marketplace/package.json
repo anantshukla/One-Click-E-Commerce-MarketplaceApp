@@ -1,10 +1,11 @@
 {
-	"name": "backend",
+	"name": "backend_ecommerce_marketplace",
 	"version": "1.0.0",
 	"description": "",
-	"main": "index.js",
+	"main": "app.js",
 	"scripts": {
-		"start": "nodemon app.js -w *.js"
+		"start": "node app.js",
+		"start:dev": "nodemon app.js -w *.js"
 	},
 	"keywords": [],
 	"author": "",
