@@ -117,13 +117,15 @@ productRouter.post("/getProductDetails", async (req, res) => {
                 p.price,
                 p.image_path as imageURL,
                 c.name as categoryName
-        FROM PRODUCTS AS p
-        LEFT JOIN CATEGORIES as c
-            ON c.id = p.category_id
-        WHERE p.id = ${productId};
-    `
+			FROM PRODUCTS AS p
+			LEFT JOIN CATEGORIES as c
+				ON c.id = p.category_id
+			WHERE p.id = ${productId};
+    		`
 		);
-
+		if (productDetailsResponse.length === 0) {
+			throw "No elements found";
+		}
 		// Converting array of single element to a json named advertisementDetails
 		let productDetails = {};
 		productDetails["advertisementDetails"] = productDetailsResponse[0];
