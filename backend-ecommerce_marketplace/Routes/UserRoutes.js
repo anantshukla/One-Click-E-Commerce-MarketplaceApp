@@ -21,8 +21,8 @@ userRouter.post("/createUser", async (req, res) => {
 
 		const hashedPassword = SHA256(password).toString(CryptoJS.enc.Base64);
 
-		emailList = await knex("USERS").select("id").where({ email: email });
-		phoneList = await knex("USERS").select("id").where({ phone: phoneNumber });
+		emailList = await knex.raw("SELECT id FROM USERS WHERE email = ?", [email]);
+		phoneList = await knex.raw("SELECT id FROM USERS WHERE phone = ?", [phoneNumber]);
 
 		// Validate whether Email or Phone Number exists
 		if (emailList.length !== 0 || phoneList.length !== 0) {
@@ -36,18 +36,10 @@ userRouter.post("/createUser", async (req, res) => {
 		} else {
 			let currentTime = getCurrentTimeInISO();
 
-			let insertResponse = await knex
-				.insert({
-					email: email,
-					password: hashedPassword,
-					first_name: firstName,
-					last_name: lastName,
-					phone: phoneNumber,
-					created_on: currentTime,
-					created_by: "System",
-				})
-				.into("USERS")
-				.returning("id");
+			let insertResponse = await knex.raw(
+				"INSERT INTO USERS (email, password, first_name, last_name, phone, created_on, created_by) VALUES(?, ?, ?, ?, ?, ?, ?) RETURNING id;",
+				[email, hashedPassword, firstName, lastName, phoneNumber, currentTime, "System"]
+			);
 
 			if (insertResponse.length === 0) {
 				failureAPIResponse(req, res, "Failure in creating user");
@@ -63,8 +55,8 @@ userRouter.post("/createUser", async (req, res) => {
 // API to Authenticate User
 userRouter.post("/authenticateUser", async (req, res) => {
 	try {
-		email = req.body.email;
-		password = req.body.password;
+		let email = req.body.email;
+		let password = req.body.password;
 
 		const hashedPassword = SHA256(password).toString(CryptoJS.enc.Base64);
 
@@ -72,10 +64,7 @@ userRouter.post("/authenticateUser", async (req, res) => {
 			failureAPIResponse(req, res, "Username and Password cannot be empty");
 		}
 
-		userList = await knex("USERS").select("*").where({
-			email: email,
-			password: hashedPassword,
-		});
+		let userList = await knex.raw("SELECT * FROM USERS WHERE email = ? AND password = ?", [email, hashedPassword]);
 
 		if (userList.length === 0) {
 			failureAPIResponse(req, res, "Authentication failed", 401);

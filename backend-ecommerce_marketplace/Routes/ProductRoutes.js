@@ -37,13 +37,15 @@ productRouter.post("/addProductsToCatalog", async (req, res) => {
 				// Insert Category
 
 				let categoryIdArr = await knex.raw(
-					`INSERT INTO CATEGORIES(name, created_by, created_on) VALUES ('${category}', 'System', '${currentTime}') RETURNING id;`
+					`INSERT INTO CATEGORIES(name, created_by, created_on) VALUES ('?', 'System', '?') RETURNING id;`,
+					[category, currentTime]
 				);
 				categoryId = categoryIdArr[0].id;
 			}
 
 			let productIdInserted = await knex.raw(
-				`INSERT INTO PRODUCTS(name, description, price, category_id, created_on, created_by) VALUES ('${title}', '${description}', ${price}, ${categoryId}, '${currentTime}', 'System') RETURNING id;`
+				`INSERT INTO PRODUCTS(name, description, price, category_id, created_on, created_by) VALUES (?, ?, ?, ?, ?, ?) RETURNING id;`,
+				[title, description, price, categoryId, currentTime, "System"]
 			);
 			productIdInserted = productIdInserted[0].id;
 
@@ -52,7 +54,7 @@ productRouter.post("/addProductsToCatalog", async (req, res) => {
 			// Downloads the File into the Storage of Server
 			await downloadImageFromUrl(image, `${imagePath}`);
 
-			await knex.raw(`UPDATE PRODUCTS SET image_path='${imagePath}' WHERE id=${productIdInserted};`);
+			await knex.raw(`UPDATE PRODUCTS SET image_path=? WHERE id=?;`, [imagePath, productIdInserted]);
 		}
 
 		successAPIResponse(req, res, "Products added successfully");
@@ -120,8 +122,9 @@ productRouter.post("/getProductDetails", async (req, res) => {
 			FROM PRODUCTS AS p
 			LEFT JOIN CATEGORIES as c
 				ON c.id = p.category_id
-			WHERE p.id = ${productId};
-    		`
+			WHERE p.id = ?;
+    		`,
+			[productId]
 		);
 		if (productDetailsResponse.length === 0) {
 			throw "No elements found";
