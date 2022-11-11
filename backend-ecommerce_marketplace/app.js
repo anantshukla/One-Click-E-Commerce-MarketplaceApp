@@ -8,6 +8,16 @@ const { successAPIResponse } = require("./commonUtils/responseInterface");
 
 app.use(express.json());
 
+// Whitelisting CORS requests from all domains
+app.use(function (req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header(
+		"Access-Control-Allow-Headers",
+		"Origin, X-Requested-With, Content-Type, Content-disposition, Accept, Authorization, User-Role"
+	);
+	next();
+});
+
 // Health Check API which can be used to ping the API Server to know if the Server is running or not
 app.get("/", (req, res) => {
 	successAPIResponse(req, res, "E-Commerce Marketplace Rest API responding");
