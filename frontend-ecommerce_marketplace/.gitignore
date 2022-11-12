@@ -2,8 +2,10 @@
 
 # dependencies
 /node_modules
+/frontend-ecommerce_marketplace/public
 /.pnp
 .pnp.js
+
 
 # testing
 /coverage
