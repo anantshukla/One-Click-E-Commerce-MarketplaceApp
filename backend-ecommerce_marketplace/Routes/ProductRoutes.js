@@ -107,7 +107,7 @@ productRouter.post("/getAllProducts", async (req, res) => {
 	}
 });
 
-productRouter.get("/getProductDetails", async (req, res) => {
+productRouter.post("/getProductDetails", async (req, res) => {
 	try {
 		let productId = req.body.productId ? req.body.productId : 0;
 
