@@ -13,7 +13,8 @@ const { productImagesLocation } = require("../commonUtils/constants");
 const { successAPIResponse, failureAPIResponse } = require("../commonUtils/responseInterface");
 const { getCurrentTimeInISO, downloadImageFromUrl } = require("../commonUtils/commonUtilityFunctions");
 
-const knex = require("../DB/db");
+const db = require("../DB/db").getSqliteDatabaseConnection();
+const logger = require("../commonUtils/logger");
 
 // API that reads the public API and inserts data to our inventory - https://fakestoreapi.com/
 productRouter.post("/addProductsToCatalog", async (req, res) => {
@@ -28,22 +29,21 @@ productRouter.post("/addProductsToCatalog", async (req, res) => {
 			title = title.replace(/['‘’"“”]/g, "");
 			description = description.replace(/['‘’"“”]/g, "");
 
-			let categoryIdArr = await knex.raw(`SELECT id FROM CATEGORIES c WHERE c.name = '${category}'`);
+			let categoryIdArr = await db.raw(`SELECT id FROM CATEGORIES c WHERE c.name = '${category}'`);
 			let categoryId;
 
 			if (categoryIdArr.length != 0) {
 				categoryId = categoryIdArr[0].id;
 			} else {
 				// Insert Category
-
-				let categoryIdArr = await knex.raw(
+				let categoryIdArr = await db.raw(
 					`INSERT INTO CATEGORIES(name, created_by, created_on) VALUES ('?', 'System', '?') RETURNING id;`,
 					[category, currentTime]
 				);
 				categoryId = categoryIdArr[0].id;
 			}
 
-			let productIdInserted = await knex.raw(
+			let productIdInserted = await db.raw(
 				`INSERT INTO PRODUCTS(name, description, price, category_id, created_on, created_by) VALUES (?, ?, ?, ?, ?, ?) RETURNING id;`,
 				[title, description, price, categoryId, currentTime, "System"]
 			);
@@ -54,20 +54,21 @@ productRouter.post("/addProductsToCatalog", async (req, res) => {
 			// Downloads the File into the Storage of Server
 			await downloadImageFromUrl(image, `${imagePath}`);
 
-			await knex.raw(`UPDATE PRODUCTS SET image_path=? WHERE id=?;`, [imagePath, productIdInserted]);
+			await db.raw(`UPDATE PRODUCTS SET image_path=? WHERE id=?;`, [imagePath, productIdInserted]);
 		}
 
 		successAPIResponse(req, res, "Products added successfully");
+		logger.createLog("Products added successfully");
 	} catch (ex) {
-		console.log(ex);
 		failureAPIResponse(req, res, "Failure in creating advertisement");
+		logger.createExceptionLog(ex);
 	}
 });
 
 productRouter.get("/getAllProductCategories", async (req, res) => {
 	try {
 		// Query that gets list of all the Categories from the db
-		let categoriesList = await knex.raw(`
+		let categoriesList = await db.raw(`
         SELECT id, name
         FROM CATEGORIES c
     `);
@@ -77,14 +78,16 @@ productRouter.get("/getAllProductCategories", async (req, res) => {
 		categoriesDetails["productCategories"] = categoriesList;
 
 		successAPIResponse(req, res, categoriesDetails);
+		logger.createLog(`Product Categories Fetched Successfully`);
 	} catch (ex) {
 		failureAPIResponse(req, res, "Failure to get Product Categories");
+		logger.createExceptionLog(ex);
 	}
 });
 
 productRouter.post("/getAllProducts", async (req, res) => {
 	try {
-		let productList = await knex.raw(
+		let productList = await db.raw(
 			`SELECT p.id as productId,
                 p.name as productName,
                 p.description as productDescription,
@@ -102,8 +105,10 @@ productRouter.post("/getAllProducts", async (req, res) => {
 		allProducts["products"] = productList;
 
 		successAPIResponse(req, res, allProducts);
+		logger.createLog(`Product Details Fetched Successfully`);
 	} catch (ex) {
 		failureAPIResponse(req, res, "Failure to get Product List");
+		logger.createExceptionLog(ex);
 	}
 });
 
@@ -112,7 +117,7 @@ productRouter.post("/getProductDetails", async (req, res) => {
 		let productId = req.body.productId ? req.body.productId : 0;
 
 		// Get details of a particular product id from the product table
-		let productDetailsResponse = await knex.raw(
+		let productDetailsResponse = await db.raw(
 			`SELECT p.id as productId,
                 p.name as productName,
                 p.description as productDescription,
@@ -133,8 +138,10 @@ productRouter.post("/getProductDetails", async (req, res) => {
 		let productDetails = {};
 		productDetails["advertisementDetails"] = productDetailsResponse[0];
 		successAPIResponse(req, res, productDetails);
+		logger.createLog(`Product Details Fetched Successfully`);
 	} catch (ex) {
 		failureAPIResponse(req, res, "Failure to get Product Details");
+		logger.createExceptionLog(ex);
 	}
 });
 
@@ -145,18 +152,18 @@ productRouter.post("/getProductImage", async (req, res) => {
 		var httpOptions = {
 			root: path.join(__rootdir),
 		};
-		console.log(__rootdir);
-		console.log(imageURL);
 		productId = req.params.productId;
 		res.sendFile(imageURL, httpOptions, function (err) {
 			if (err) {
 				failureAPIResponse(req, res, "Image Not Found", 404);
+				logger.createExceptionLog("Image Not Found");
 			} else {
-				console.log(`Image Sent: ${imageURL}`);
+				logger.createLog(`Image Sent: ${imageURL}`);
 			}
 		});
 	} catch (ex) {
 		failureAPIResponse(req, res, "Failure to get Image");
+		logger.createExceptionLog("Failure to get Image");
 	}
 });
 
