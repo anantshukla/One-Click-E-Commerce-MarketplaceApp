@@ -37,8 +37,8 @@ productRouter.post("/addProductsToCatalog", async (req, res) => {
 			} else {
 				// Insert Category
 				let categoryIdArr = await db.raw(
-					`INSERT INTO CATEGORIES(name, created_by, created_on) VALUES ('?', 'System', '?') RETURNING id;`,
-					[category, currentTime]
+					`INSERT INTO CATEGORIES(name, created_by, created_on) VALUES (?, ?, ?) RETURNING id;`,
+					[category, "System", currentTime]
 				);
 				categoryId = categoryIdArr[0].id;
 			}

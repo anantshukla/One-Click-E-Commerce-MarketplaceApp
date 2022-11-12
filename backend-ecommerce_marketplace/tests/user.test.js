@@ -23,7 +23,7 @@ function randIntofLen(len = 5) {
 
 describe("Ping API", () => {
 	describe("/", () => {
-		it("/createUser should create new user", async () => {
+		it("/Should ping the Server to check if the Server is running", async () => {
 			const res = await request(app).get(`/`);
 			expect(res.status).toEqual(200);
 			expect(res.body.statusCode).toEqual(1);
@@ -64,7 +64,7 @@ describe("Ping API", () => {
 			});
 			expect(res.status).toEqual(400);
 		});
-		it("/createUser should throw error as the email is empty", async () => {
+		it("/createUser should throw error as the email is null", async () => {
 			const res = await request(app).post(`/createUser`).send({
 				email: "",
 				password: "test_password",

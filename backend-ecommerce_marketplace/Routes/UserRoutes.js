@@ -22,19 +22,31 @@ userRouter.post("/createUser", async (req, res) => {
 
 		const hashedPassword = SHA256(password).toString(CryptoJS.enc.Base64);
 
+		// Validate and make sure that phoneNumber, lastName, firstName, password, email are not empty
+		if (
+			email === null ||
+			email === "" ||
+			password === null ||
+			password === "" ||
+			firstName === null ||
+			firstName === "" ||
+			lastName === null ||
+			lastName === "" ||
+			phoneNumber === null ||
+			phoneNumber === ""
+		) {
+			failureAPIResponse(req, res, "Input Fields Cannot be empty");
+			logger.createExceptionLog(req, res, "Input Fields Cannot be empty");
+			return;
+		}
+
+		emailList = await db.raw("SELECT id FROM USERS WHERE email = ?", [email]);
+		phoneList = await db.raw("SELECT id FROM USERS WHERE phone = ?", [phoneNumber]);
+
 		// Validate whether Email or Phone Number exists
 		if (emailList.length !== 0 || phoneList.length !== 0) {
 			failureAPIResponse(req, res, "Phone number or email address already exists");
 			logger.createExceptionLog("Phone number or email address already exists");
-			return;
-		}
-		emailList = await db.raw("SELECT id FROM USERS WHERE email = ?", [email]);
-		phoneList = await db.raw("SELECT id FROM USERS WHERE phone = ?", [phoneNumber]);
-
-		// Validate and make sure that phoneNumber, lastName, firstName, password, email are not empty
-		if (email === null || password === null || firstName === null || lastName === null || phoneNumber === null) {
-			failureAPIResponse(req, res, "Input Fields Cannot be empty");
-			logger.createExceptionLog(req, res, "Input Fields Cannot be empty");
 			return;
 		}
 

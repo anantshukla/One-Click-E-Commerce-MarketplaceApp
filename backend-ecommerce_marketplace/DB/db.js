@@ -4,6 +4,7 @@ class sqliteDatabase {
 			client: "sqlite3",
 			connection: {
 				filename: "../sql/e_commerce_marketplace.sqlite",
+				// filename: "../sql/e_commerce_marketplace-testing.sqlite",
 			},
 			useNullAsDefault: true,
 			pool: {
