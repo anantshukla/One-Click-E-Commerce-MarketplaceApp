@@ -7,7 +7,6 @@ import ProductDetails from './components/pages/ProductDetails';
 import Products from './components/pages/Products';
 import SignUp from './components/pages/SignUp';
 import Login from './components/pages/Login';
-import Dashboard from './components/pages/Dashboard';
 import PrivateRoute from './Utils/PrivateRoute';
 import PublicRoute from './Utils/PublicRoute';
 
@@ -21,9 +20,8 @@ function App() {
           <Route path='/' exact component={Home} />
           <Route path='/productdetails' component={ProductDetails} />
           <PrivateRoute path='/products' component={Products} />
-          <Route path='/sign-up' component={SignUp} />
+          <PublicRoute path='/sign-up' component={SignUp} />
           <PublicRoute path='/login' component={Login} />
-          {/* <PrivateRoute path='/dashboard' component={Dashboard} /> */}
         </Switch>
       </Router>
     </>
