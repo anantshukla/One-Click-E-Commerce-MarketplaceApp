@@ -2,7 +2,8 @@ const express = require("express");
 const app = express();
 
 const constants = require("./commonUtils/constants");
-let apiPort = constants.apiPort;
+const apiPort = constants.apiPort;
+const logger = require("./commonUtils/logger");
 
 const { successAPIResponse } = require("./commonUtils/responseInterface");
 
@@ -33,7 +34,7 @@ app.use(productController);
 
 // Server hosted on port 3001
 app.listen(apiPort ? apiPort : 3001, () => {
-	console.log(`E-Commerce Marketplace Rest API is listening on port ${apiPort}`);
+	logger.createLog(`E-Commerce Marketplace Rest API is listening on port ${apiPort}`);
 });
 
 // Global variable which stores the root directory
