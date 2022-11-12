@@ -25,12 +25,12 @@ function Login(props) {
       setLoading(false);
       setUserSession(response.data.statusCode);
       props.history.push('/products');
+      window.location.reload()
     }).catch(error => {
       setLoading(false);
       if (error.response.status === 401) setError(error.response.data.message);
       else setError("Something went wrong. Please try again later.");
-    }).finally(
-    window.location.reload())
+    })
   }
 
   return(
