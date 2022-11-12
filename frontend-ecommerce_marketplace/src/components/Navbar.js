@@ -1,25 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from './Button';
+// import { LogoutButton } from './LogoutButton';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
+import './pages/Products.css';
+import { getToken } from '../Utils/Common';
+import { removeUserSession } from '../Utils/Common';
+import { useHistory } from 'react-router-dom';
 
-function Navbar() {
+
+function Navbar(props) {
   const [click, setClick] = useState(false);
   const [button, setButton] = useState(true);
-
   const handleClick = () => setClick(!click);
   const closeMobileMenu = () => setClick(false);
+  
+  const history = useHistory();
+
+  // handle click event of logout button
+  const handleLogout = () => {
+    removeUserSession();
+    history.push('/login');
+    window.location.reload();
+  }
 
   const showButton = () => {
-    if (window.innerWidth <= 960) {
+    if (getToken()) {
       setButton(false);
     } else {
       setButton(true);
     }
   };
 
+  // const getLoginState = () => {
+  //   if (!getToken()) {
+  //   setUserLoginState(getToken())
+  //   }
+  // }
+  
+  // useEffect(() => {
+  //   getLoginState()
+  // }, [userLoginState, handleLogout]);
+
   useEffect(() => {
-    showButton();
+    showButton()
   }, []);
 
   window.addEventListener('resize', showButton);
@@ -70,7 +94,10 @@ function Navbar() {
               </Link>
             </li>
           </ul>
-          {button && <Button buttonStyle='btn--outline'>SIGN UP</Button>}
+
+          {getToken() ?
+            <button className='button_logout' onClick={handleLogout} value="Logout" > LOG OUT </button>
+            : (button && <Button buttonStyle='btn--outline'>SIGN UP</Button> )}
         </div>
       </nav>
     </>

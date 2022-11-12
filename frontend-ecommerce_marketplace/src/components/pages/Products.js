@@ -2,16 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './Products.css';
 import axios from 'axios';
 import { Link } from 'react-router-dom'
-import { removeUserSession } from '../../Utils/Common';
+// import { getToken } from '../../Utils/Common';
 
 function Products(props) {
-
-
-    // handle click event of logout button
-    const handleLogout = () => {
-      removeUserSession();
-      props.history.push('/login');
-    }
  
   const [data, setData] = useState([]);
 
@@ -24,16 +17,14 @@ function Products(props) {
     }).catch((e) => console.log(e));
   }, [])
 
+  // console.log(JSON.parse(getToken())['statusCode'])
+
     return (
       <>
-          <div>
-      <input className='button_logout' type="button" onClick={handleLogout} value="Logout" />
-    </div>
       <div id="product">
         {
           data.map(product => (
             <div className="card" key={product.productId}>
-              {/* <Link to={`/productdetails/${product.productId}`} > */}
               <Link to={{ pathname: '/productdetails', state: { productId: product.productId} }}>
                 <img src={product.imageURL} alt="" />
               </Link>

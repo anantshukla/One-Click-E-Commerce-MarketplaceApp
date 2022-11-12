@@ -23,19 +23,3 @@ export const getUser = () => {
   }
 
 
-// return the products ID from the session storage
-  export const getProductId = () => {
-    const productId = sessionStorage.getItem('productId');
-    if (productId) return JSON.parse(productId);
-    else return null;
-  }
-
-  export const getproductId = () => {
-    return sessionStorage.getItem('productId') || null;
-  }
-
-  // set the token and user from the session storage
-  export const setProductId = (producId) => {
-    sessionStorage.setItem('producId', JSON.stringify(producId));
-  }
-

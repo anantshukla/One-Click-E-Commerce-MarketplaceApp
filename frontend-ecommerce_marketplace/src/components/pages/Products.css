@@ -60,4 +60,17 @@
     display: block;
     margin-left: auto;
     margin-right: 0;
+    background-color: transparent;
+    color: #fff;
+    padding: 8px 20px;
+    border: 1px solid var(--primary);
+    transition: all 0.3s ease-out;
+  }
+
+  .button_goback {
+    display: block;
+    margin-left: auto;
+    margin-right: 0;
+    color: rgb(28, 24, 24);
+
   }

@@ -4,6 +4,9 @@ import axios from 'axios';
 import {setUserSession} from '../../Utils/Common';
 
 
+
+
+
 function Login(props) {
 
   const [email, setEmail] = useState('');
@@ -20,14 +23,14 @@ function Login(props) {
       password: password
     }).then(response => {
       setLoading(false);
-      setUserSession(response.data);
-      console.warn(response.data);
+      setUserSession(response.data.statusCode);
       props.history.push('/products');
     }).catch(error => {
       setLoading(false);
       if (error.response.status === 401) setError(error.response.data.message);
       else setError("Something went wrong. Please try again later.");
-    });
+    }).finally(
+    window.location.reload())
   }
 
   return(
