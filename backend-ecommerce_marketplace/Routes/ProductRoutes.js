@@ -19,7 +19,7 @@ const logger = require("../commonUtils/logger");
 // API that reads the public API and inserts data to our inventory - https://fakestoreapi.com/
 productRouter.post("/addProductsToCatalog", async (req, res) => {
 	try {
-		const APILink = "https://fakestoreapi.com/products?limit=50";
+		const APILink = "https://fakestoreapi.com/products?limit=20";
 		const responseFromGetProducts = (await axios.get(APILink)).data;
 
 		for await (const eachProduct of responseFromGetProducts) {

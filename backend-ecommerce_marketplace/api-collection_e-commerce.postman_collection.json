@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"tim@gmail.com\",\r\n    \"password\": \"password5\",\r\n    \"firstName\": \"Tim\",\r\n    \"lastName\": \"Tamara\",\r\n    \"phoneNumber\": \"+1 887 444 5555\"\r\n}",
+					"raw": "{\r\n    \"email\": \"sarah@gmail.com\",\r\n    \"password\": \"password6\",\r\n    \"firstName\": \"Sarah\",\r\n    \"lastName\": \"Coney\",\r\n    \"phoneNumber\": \"+1 887 444 5515\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -40,7 +40,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"tim@gmail.com\",\r\n    \"password\": \"password5\"\r\n}",
+					"raw": "{\r\n    \"email\": \"san@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -83,15 +83,6 @@
 			"request": {
 				"method": "POST",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
 					"raw": "localhost:3001/getAllProducts",
 					"host": [
@@ -112,7 +103,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n   \"productId\": 4\r\n}",
+					"raw": "{\r\n   \"productId\": 2\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -152,12 +143,15 @@
 		},
 		{
 			"name": "localhost:3001/getProductImage",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"imageURL\": \"./assets/images/4.jpg\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -165,13 +159,14 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:3001/getProductImage",
+					"raw": "localhost:3001/getProductImage/2.jpg",
 					"host": [
 						"localhost"
 					],
 					"port": "3001",
 					"path": [
-						"getProductImage"
+						"getProductImage",
+						"2.jpg"
 					]
 				}
 			},
