@@ -23,18 +23,7 @@ userRouter.post("/createUser", async (req, res) => {
 		const hashedPassword = SHA256(password).toString(CryptoJS.enc.Base64);
 
 		// Validate and make sure that phoneNumber, lastName, firstName, password, email are not empty
-		if (
-			email === null ||
-			email === "" ||
-			password === null ||
-			password === "" ||
-			firstName === null ||
-			firstName === "" ||
-			lastName === null ||
-			lastName === "" ||
-			phoneNumber === null ||
-			phoneNumber === ""
-		) {
+		if (noFieldsAreEmptyOrNull([email, password, firstName, lastName, phoneNumber])) {
 			failureAPIResponse(req, res, "Input Fields Cannot be empty");
 			logger.createExceptionLog(req, res, "Input Fields Cannot be empty");
 			return;
@@ -44,7 +33,7 @@ userRouter.post("/createUser", async (req, res) => {
 		phoneList = await db.raw("SELECT id FROM USERS WHERE phone = ?", [phoneNumber]);
 
 		// Validate whether Email or Phone Number exists
-		if (emailList.length !== 0 || phoneList.length !== 0) {
+		if (anyofTheListIsNotEmpty([emailList, phoneList])) {
 			failureAPIResponse(req, res, "Phone number or email address already exists");
 			logger.createExceptionLog("Phone number or email address already exists");
 			return;
@@ -78,7 +67,7 @@ userRouter.post("/authenticateUser", async (req, res) => {
 
 		const hashedPassword = SHA256(password).toString(CryptoJS.enc.Base64);
 
-		if (email === null || password === null) {
+		if (noFieldsAreEmptyOrNull([email, password])) {
 			failureAPIResponse(req, res, "Username and Password cannot be empty");
 			logger.createExceptionLog("Username and Password cannot be empty");
 		}
@@ -97,5 +86,27 @@ userRouter.post("/authenticateUser", async (req, res) => {
 		logger.createExceptionLog(ex);
 	}
 });
+
+const noFieldsAreEmptyOrNull = (fieldList) => {
+	let flag = false;
+
+	fieldList.forEach((element) => {
+		if (element === null || element === "" || element === undefined) {
+			flag = true;
+		}
+	});
+	return flag;
+};
+
+const anyofTheListIsNotEmpty = (fieldList) => {
+	let flag = false;
+
+	fieldList.forEach((element) => {
+		if (element.length !== 0) {
+			flag = true;
+		}
+	});
+	return flag;
+};
 
 module.exports = userRouter;

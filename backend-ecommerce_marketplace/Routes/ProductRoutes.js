@@ -29,7 +29,7 @@ productRouter.post("/addProductsToCatalog", async (req, res) => {
 			title = title.replace(/['‘’"“”]/g, "");
 			description = description.replace(/['‘’"“”]/g, "");
 
-			let categoryIdArr = await db.raw(`SELECT id FROM CATEGORIES c WHERE c.name = '${category}'`);
+			let categoryIdArr = await db.raw(`SELECT id FROM CATEGORIES c WHERE c.name = ?`, [category]);
 			let categoryId;
 
 			if (categoryIdArr.length != 0) {
@@ -50,11 +50,12 @@ productRouter.post("/addProductsToCatalog", async (req, res) => {
 			productIdInserted = productIdInserted[0].id;
 
 			const fileExtension = image.split(".").pop();
+			let imageName = `${productIdInserted}.${fileExtension}`;
 			let imagePath = `./${productImagesLocation}/${productIdInserted}.${fileExtension}`;
 			// Downloads the File into the Storage of Server
 			await downloadImageFromUrl(image, `${imagePath}`);
 
-			await db.raw(`UPDATE PRODUCTS SET image_path=? WHERE id=?;`, [imagePath, productIdInserted]);
+			await db.raw(`UPDATE PRODUCTS SET image_path=? WHERE id=?;`, [imageName, productIdInserted]);
 		}
 
 		successAPIResponse(req, res, "Products added successfully");
