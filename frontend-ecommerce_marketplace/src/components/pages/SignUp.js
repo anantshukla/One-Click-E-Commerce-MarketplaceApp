@@ -38,7 +38,7 @@ function SignUp(props) {
           <h1 style={{ color: 'Brown' ,fontSize: "3rem"}}>CREATE ACCOUNT</h1>
           <br/>
             <div >
-              <input type="text" placeholder="email" className="name" value={email} onChange = {(e) => setEmail(e.target.value)}/>
+              <input type="email" placeholder="email" className="name" value={email} onChange = {(e) => setEmail(e.target.value)}/>
             </div> <br/>
             <div >
               <input type="password" placeholder="password" className="name" value={password} onChange = {(e) => setPassword(e.target.value)} />
