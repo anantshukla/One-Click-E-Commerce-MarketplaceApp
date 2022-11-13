@@ -50,7 +50,7 @@ productRouter.post("/addProductsToCatalog", async (req, res) => {
 			productIdInserted = productIdInserted[0].id;
 
 			const fileExtension = image.split(".").pop();
-			let imagePath = `${productImagesLocation}/${productIdInserted}.${fileExtension}`;
+			let imagePath = `${productIdInserted}.${fileExtension}`;
 			// Downloads the File into the Storage of Server
 			await downloadImageFromUrl(image, `${imagePath}`);
 
@@ -92,7 +92,7 @@ productRouter.post("/getAllProducts", async (req, res) => {
                 p.name as productName,
                 p.description as productDescription,
                 p.price,
-                p.image_path as imageURL,
+                p.image_path as imageName,
                 c.name as categoryName
         FROM PRODUCTS AS p
         LEFT JOIN CATEGORIES as c
@@ -122,7 +122,7 @@ productRouter.post("/getProductDetails", async (req, res) => {
                 p.name as productName,
                 p.description as productDescription,
                 p.price,
-                p.image_path as imageURL,
+                p.image_path as imageName,
                 c.name as categoryName
 			FROM PRODUCTS AS p
 			LEFT JOIN CATEGORIES as c
@@ -145,25 +145,26 @@ productRouter.post("/getProductDetails", async (req, res) => {
 	}
 });
 
-productRouter.post("/getProductImage", async (req, res) => {
+productRouter.get("/getProductImage/:imageName", async (req, res) => {
 	try {
-		let imageURL = req.body.imageURL;
+		let imageName = req.params.imageName;
 
 		var httpOptions = {
-			root: path.join(__rootdir),
+			root: path.join(__rootdir + `/${productImagesLocation}/`),
 		};
+
 		productId = req.params.productId;
-		res.sendFile(imageURL, httpOptions, function (err) {
+		res.sendFile(imageName, httpOptions, function (err) {
 			if (err) {
 				failureAPIResponse(req, res, "Image Not Found", 404);
-				logger.createExceptionLog("Image Not Found");
+				logger.createExceptionLog(err);
 			} else {
-				logger.createLog(`Image Sent: ${imageURL}`);
+				logger.createLog(`Image Sent: ${imageName}`);
 			}
 		});
 	} catch (ex) {
 		failureAPIResponse(req, res, "Failure to get Image");
-		logger.createExceptionLog("Failure to get Image");
+		logger.createExceptionLog(ex);
 	}
 });
 
