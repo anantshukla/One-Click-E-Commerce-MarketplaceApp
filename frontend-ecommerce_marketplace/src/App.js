@@ -18,7 +18,7 @@ function App() {
         <Navbar />
         <Switch>
           <Route path='/' exact component={Home} />
-          <Route path='/productdetails' component={ProductDetails} />
+          <PrivateRoute path='/productdetails' component={ProductDetails} />
           <PrivateRoute path='/products' component={Products} />
           <PublicRoute path='/sign-up' component={SignUp} />
           <PublicRoute path='/login' component={Login} />

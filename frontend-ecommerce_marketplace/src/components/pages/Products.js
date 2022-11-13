@@ -26,7 +26,7 @@ function Products(props) {
           data.map(product => (
             <div className="card" key={product.productId}>
               <Link to={{ pathname: '/productdetails', state: { productId: product.productId} }}>
-                <img src={product.imageURL} alt="" />
+                <img src={`http://localhost:3001/getProductImage/${product.imageName}`} alt="" />
               </Link>
               <div className="content">
                 <h3>

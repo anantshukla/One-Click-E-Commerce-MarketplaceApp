@@ -4,9 +4,6 @@ import axios from 'axios';
 import {setUserSession} from '../../Utils/Common';
 
 
-
-
-
 function Login(props) {
 
   const [email, setEmail] = useState('');

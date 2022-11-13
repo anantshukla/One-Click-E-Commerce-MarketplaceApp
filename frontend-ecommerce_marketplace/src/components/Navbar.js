@@ -32,15 +32,6 @@ function Navbar(props) {
     }
   };
 
-  // const getLoginState = () => {
-  //   if (!getToken()) {
-  //   setUserLoginState(getToken())
-  //   }
-  // }
-  
-  // useEffect(() => {
-  //   getLoginState()
-  // }, [userLoginState, handleLogout]);
 
   useEffect(() => {
     showButton()
@@ -65,14 +56,11 @@ function Navbar(props) {
                 Home
               </Link>
             </li>
+
+            
             <li className='nav-item'>
-              <Link
-                to='/login'
-                className='nav-links'
-                onClick={closeMobileMenu}
-              >
-                Login
-              </Link>
+              {getToken()? <p> </p> :
+              <Link  to='/login' className='nav-links' onClick={closeMobileMenu} > Login </Link>}
             </li>
             <li className='nav-item'>
               <Link
