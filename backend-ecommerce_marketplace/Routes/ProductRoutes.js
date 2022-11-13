@@ -50,7 +50,7 @@ productRouter.post("/addProductsToCatalog", async (req, res) => {
 			productIdInserted = productIdInserted[0].id;
 
 			const fileExtension = image.split(".").pop();
-			let imagePath = `${productIdInserted}.${fileExtension}`;
+			let imagePath = `./${productImagesLocation}/${productIdInserted}.${fileExtension}`;
 			// Downloads the File into the Storage of Server
 			await downloadImageFromUrl(image, `${imagePath}`);
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1668286972472" clover="3.2.0">
-  <project timestamp="1668286972472" name="All files">
-    <metrics statements="448" coveredstatements="421" conditionals="59" coveredconditionals="49" methods="13" coveredmethods="12" elements="520" coveredelements="482" complexity="0" loc="448" ncloc="448" packages="4" files="8" classes="8"/>
+<coverage generated="1668304065955" clover="3.2.0">
+  <project timestamp="1668304065956" name="All files">
+    <metrics statements="449" coveredstatements="422" conditionals="59" coveredconditionals="49" methods="13" coveredmethods="12" elements="521" coveredelements="483" complexity="0" loc="449" ncloc="449" packages="4" files="8" classes="8"/>
     <package name="backend-ecommerce_marketplace">
       <metrics statements="43" coveredstatements="43" conditionals="2" coveredconditionals="2" methods="0" coveredmethods="0"/>
       <file name="app.js" path="E:\Concordia University - Study\Term 1\SOEN 6441\Project\One-Click-Classifieds-App\backend-ecommerce_marketplace\app.js">
@@ -82,9 +82,9 @@
       </file>
     </package>
     <package name="backend-ecommerce_marketplace.Routes">
-      <metrics statements="271" coveredstatements="252" conditionals="40" coveredconditionals="32" methods="0" coveredmethods="0"/>
+      <metrics statements="272" coveredstatements="253" conditionals="40" coveredconditionals="32" methods="0" coveredmethods="0"/>
       <file name="ProductRoutes.js" path="E:\Concordia University - Study\Term 1\SOEN 6441\Project\One-Click-Classifieds-App\backend-ecommerce_marketplace\Routes\ProductRoutes.js">
-        <metrics statements="170" coveredstatements="156" conditionals="16" coveredconditionals="10" methods="0" coveredmethods="0"/>
+        <metrics statements="171" coveredstatements="157" conditionals="16" coveredconditionals="10" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -240,21 +240,22 @@
         <line num="153" count="1" type="stmt"/>
         <line num="154" count="1" type="stmt"/>
         <line num="155" count="1" type="stmt"/>
-        <line num="156" count="1" type="cond" truecount="1" falsecount="0"/>
-        <line num="157" count="1" type="cond" truecount="0" falsecount="1"/>
-        <line num="158" count="0" type="stmt"/>
+        <line num="156" count="1" type="stmt"/>
+        <line num="157" count="1" type="cond" truecount="1" falsecount="0"/>
+        <line num="158" count="1" type="cond" truecount="0" falsecount="1"/>
         <line num="159" count="0" type="stmt"/>
-        <line num="160" count="1" type="stmt"/>
+        <line num="160" count="0" type="stmt"/>
         <line num="161" count="1" type="stmt"/>
         <line num="162" count="1" type="stmt"/>
         <line num="163" count="1" type="stmt"/>
-        <line num="164" count="1" type="cond" truecount="0" falsecount="1"/>
-        <line num="165" count="0" type="stmt"/>
+        <line num="164" count="1" type="stmt"/>
+        <line num="165" count="1" type="cond" truecount="0" falsecount="1"/>
         <line num="166" count="0" type="stmt"/>
         <line num="167" count="0" type="stmt"/>
-        <line num="168" count="1" type="stmt"/>
+        <line num="168" count="0" type="stmt"/>
         <line num="169" count="1" type="stmt"/>
         <line num="170" count="1" type="stmt"/>
+        <line num="171" count="1" type="stmt"/>
       </file>
       <file name="UserRoutes.js" path="E:\Concordia University - Study\Term 1\SOEN 6441\Project\One-Click-Classifieds-App\backend-ecommerce_marketplace\Routes\UserRoutes.js">
         <metrics statements="101" coveredstatements="96" conditionals="24" coveredconditionals="22" methods="0" coveredmethods="0"/>
@@ -382,15 +383,15 @@
         <line num="15" count="20" type="stmt"/>
         <line num="16" count="20" type="stmt"/>
         <line num="17" count="20" type="cond" truecount="1" falsecount="0"/>
-        <line num="18" count="20" type="stmt"/>
-        <line num="19" count="20" type="stmt"/>
-        <line num="20" count="20" type="cond" truecount="1" falsecount="0"/>
-        <line num="21" count="651" type="stmt"/>
-        <line num="22" count="20" type="stmt"/>
-        <line num="23" count="20" type="stmt"/>
-        <line num="24" count="20" type="cond" truecount="1" falsecount="0"/>
-        <line num="25" count="20" type="stmt"/>
-        <line num="26" count="20" type="stmt"/>
+        <line num="18" count="19" type="stmt"/>
+        <line num="19" count="19" type="stmt"/>
+        <line num="20" count="19" type="cond" truecount="1" falsecount="0"/>
+        <line num="21" count="534" type="stmt"/>
+        <line num="22" count="19" type="stmt"/>
+        <line num="23" count="19" type="stmt"/>
+        <line num="24" count="19" type="cond" truecount="1" falsecount="0"/>
+        <line num="25" count="14" type="stmt"/>
+        <line num="26" count="19" type="stmt"/>
         <line num="27" count="20" type="stmt"/>
         <line num="28" count="20" type="stmt"/>
         <line num="29" count="20" type="stmt"/>

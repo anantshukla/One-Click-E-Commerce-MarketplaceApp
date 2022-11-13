@@ -21,6 +21,7 @@ describe("Product Controller", () => {
 					productName: expect.any(String),
 					productDescription: expect.any(String),
 					price: expect.any(Number),
+					imageName: expect.any(String),
 					categoryName: expect.any(String),
 				});
 			});
@@ -35,14 +36,14 @@ describe("Product Controller", () => {
 			expect(res.status).toEqual(200);
 			expect(res.body.statusCode).toEqual(1);
 
-			const { productId, productName, productDescription, price, imageURL, categoryName } =
+			const { productId, productName, productDescription, price, imageName, categoryName } =
 				res.body.message.advertisementDetails;
 
 			expect(productId).toEqual(expect.any(Number));
 			expect(productName).toEqual(expect.any(String));
 			expect(productDescription).toEqual(expect.any(String));
 			expect(price).toEqual(expect.any(Number));
-			expect(imageURL).toEqual(expect.any(String));
+			expect(imageName).toEqual(expect.any(String));
 			expect(categoryName).toEqual(expect.any(String));
 		});
 
@@ -73,9 +74,7 @@ describe("Product Controller", () => {
 
 	describe("/getProductImage", () => {
 		it("/getProductImage should get product image", async () => {
-			const res = await request(app).post(`/getProductImage`).send({
-				imageURL: "assets/images/4.jpg",
-			});
+			const res = await request(app).get(`/getProductImage/1.jpg`);
 			expect(res.status).toEqual(200);
 		});
 	});
