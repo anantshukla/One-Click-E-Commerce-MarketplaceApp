@@ -2,6 +2,40 @@
 
 ### Course - SOEN 6411: Advanced Programming Practices
 
+&nbsp;
+&nbsp;
+
+## How to run the project
+
+1. Install NodeJS from https://nodejs.org/en/download/
+2. Clone the Project
+
+```
+git clone https://github.com/anantshukla/One-Click-E-Commerce-MarketplaceApp.git
+```
+
+3. Run the API Server
+
+```
+cd backend-ecommerce_marketplace
+npm install
+npm run start
+```
+
+4. Run the Front End application
+
+```
+cd backend-ecommerce_marketplace
+npm install
+npm run start
+```
+
+A browser session on http://localhost:3000 with the front end of the application.
+
+<u>Note:</u> Backend is hosted on http://localhost:3001
+
+&nbsp;
+
 ## Project Overview
 
 The project aims to build an e-commerce application which allows users to make online
