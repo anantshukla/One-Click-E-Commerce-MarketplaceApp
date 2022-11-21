@@ -2,6 +2,8 @@
 
 ### Course - SOEN 6411: Advanced Programming Practices
 
+### Video Presentation: https://drive.google.com/drive/folders/1DLgrFPFA6-krHzKdbPj3OAV5KNLwezie?usp=sharing
+
 &nbsp;
 &nbsp;
 
